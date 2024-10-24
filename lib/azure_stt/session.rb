@@ -20,7 +20,7 @@ module AzureSTT
     def initialize(region: AzureSTT.configuration.region,
                    subscription_key: AzureSTT.configuration.subscription_key,
                    government: AzureSTT.configuration.government)
-      @client = Client.new(region: region, subscription_key: subscription_key. government: government)
+      @client = Client.new(region: region, subscription_key: subscription_key, government: government)
     end
 
     #
