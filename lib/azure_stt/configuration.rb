@@ -6,7 +6,7 @@ module AzureSTT
   # the key is in a .env file
   #
   class Configuration
-    attr_accessor :subscription_key, :region
+    attr_accessor :subscription_key, :region, :government
   end
 
   #
