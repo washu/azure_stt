@@ -8,7 +8,7 @@ module AzureSTT
   class Client
     include HTTParty
 
-    attr_reader :region, :subscription_key, :government
+    attr_reader :region, :subscription_key, :government, :private_link
 
     #
     # Initialize the client
@@ -16,11 +16,15 @@ module AzureSTT
     # @param [String] subscription_key Cognitive Services API Key
     # @param [String] region The region of your resources
     #
-    def initialize(region:, subscription_key:, government:)
+    def initialize(region:, subscription_key:, government:, private_link:)
       @subscription_key = subscription_key
       @region = region
       @government = government
+      @private_link = private_link
       self.class.base_uri "https://#{region}.api.cognitive.microsoft.#{government ? 'us' : 'com'}/speechtotext/v3.1"
+      if @private_link.present?
+        self.class.base_uri "#{@private_link}/speechtotext/v3.1"
+      end      
     end
 
     #
