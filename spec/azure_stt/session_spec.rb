@@ -17,6 +17,30 @@ describe AzureSTT::Session do
       .and_return(client)
   end
 
+  describe '#initialize' do
+    it 'passes endpoint and TLS options to the client' do
+      described_class.new(
+        region: 'usgovvirginia',
+        subscription_key: 'dfhd',
+        government: true,
+        private_link: 'https://a2103tsapp1',
+        ssl_verify_peer: false,
+        ssl_ca_file: '/tmp/private-ca.pem'
+      )
+
+      expect(AzureSTT::Client)
+        .to have_received(:new)
+        .with(
+          region: 'usgovvirginia',
+          subscription_key: 'dfhd',
+          government: true,
+          private_link: 'https://a2103tsapp1',
+          ssl_verify_peer: false,
+          ssl_ca_file: '/tmp/private-ca.pem'
+        )
+    end
+  end
+
   describe '#create_transcription' do
     subject(:create_transcription) do
       session.create_transcription(**params)

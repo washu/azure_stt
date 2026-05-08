@@ -46,6 +46,16 @@ Two environment variables are used:
 
 - 'SUBSCRIPTION_KEY': the API key you can generate on your Azure account.
 
+Optional environment variables:
+
+- 'GOVERNMENT': set to `true` to use `microsoft.us` endpoints.
+
+- 'PRIVATE_LINK': set to your private endpoint base URL (for example `https://a2103tsapp1`).
+
+- 'SSL_VERIFY_PEER': set to `false` to disable TLS certificate verification (unsafe, but can help with private endpoints that do not have matching certificates).
+
+- 'SSL_CA_FILE': path to a custom CA bundle used to validate private certificates.
+
 You can look at the file `env.sample` and change the values.
 If you do not want to use environment variables, you can configure the values like so:
 
@@ -53,13 +63,44 @@ If you do not want to use environment variables, you can configure the values li
 AzureSTT.configure do |config|
   config.region = 'your_region'
   config.subscription_key = 'your_key'
+  config.government = false
+  config.private_link = nil
+  config.ssl_verify_peer = true
+  config.ssl_ca_file = nil
+end
+```
+
+If your private link certificate hostname does not match the endpoint hostname, requests can fail with `certificate verify failed (Hostname mismatch)`.
+You can work around it by disabling peer verification:
+
+```ruby
+AzureSTT.configure do |config|
+  config.private_link = 'https://a2103tsapp1'
+  config.ssl_verify_peer = false
+end
+```
+
+Prefer using a private CA when possible:
+
+```ruby
+AzureSTT.configure do |config|
+  config.private_link = 'https://a2103tsapp1'
+  config.ssl_verify_peer = true
+  config.ssl_ca_file = '/path/to/private-ca.pem'
 end
 ```
 
 Finally, the class `AzureSTT::Session` uses by the default the values from the configuration, but you can initialize the session with custom values:
 
 ```ruby
-session = AzureSTT::Session.new(region: 'your_region', subscription_key: 'your_key')
+session = AzureSTT::Session.new(
+  region: 'your_region',
+  subscription_key: 'your_key',
+  government: false,
+  private_link: nil,
+  ssl_verify_peer: true,
+  ssl_ca_file: nil
+)
 ```
 
 ### Start a transcription

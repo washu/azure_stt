@@ -188,4 +188,55 @@ describe AzureSTT::Client do
       expect(delete_transcription).to be_truthy
     end
   end
+
+  describe 'TLS options' do
+    let(:id) do
+      '9c142230-a9e4-4dbb-8cc7-70ca43d5cc91'
+    end
+
+    let(:response_double) do
+      instance_double(HTTParty::Response, code: 200, parsed_response: {})
+    end
+
+    it 'disables certificate verification when ssl_verify_peer is false' do
+      insecure_client = described_class.new(
+        region: 'region',
+        subscription_key: 'ljdhfkjfh',
+        ssl_verify_peer: false
+      )
+
+      expect(described_class)
+        .to receive(:get)
+        .with("/transcriptions/#{id}", hash_including(verify: false))
+        .and_return(response_double)
+
+      insecure_client.get_transcription(id)
+    end
+
+    it 'uses the configured CA file when verification is enabled' do
+      ca_file = '/tmp/private-ca.pem'
+      secure_client = described_class.new(
+        region: 'region',
+        subscription_key: 'ljdhfkjfh',
+        ssl_verify_peer: true,
+        ssl_ca_file: ca_file
+      )
+
+      expect(described_class)
+        .to receive(:get)
+        .with('/transcriptions', hash_including(verify: true, ssl_ca_file: ca_file))
+        .and_return(response_double)
+
+      secure_client.get_transcriptions
+    end
+
+    it 'wraps SSL errors as AzureSTT::NetError' do
+      allow(described_class)
+        .to receive(:get)
+        .and_raise(OpenSSL::SSL::SSLError, 'hostname mismatch')
+
+      expect { client.get_transcription(id) }
+        .to raise_error(AzureSTT::NetError, /hostname mismatch/)
+    end
+  end
 end

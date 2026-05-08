@@ -20,8 +20,17 @@ module AzureSTT
     def initialize(region: AzureSTT.configuration.region,
                    subscription_key: AzureSTT.configuration.subscription_key,
                    government: AzureSTT.configuration.government,
-                   private_link: AzureSTT.configuration.private_link)
-      @client = Client.new(region: region, subscription_key: subscription_key, government: government, private_link: private_link)
+                   private_link: AzureSTT.configuration.private_link,
+                   ssl_verify_peer: AzureSTT.configuration.ssl_verify_peer,
+                   ssl_ca_file: AzureSTT.configuration.ssl_ca_file)
+      @client = Client.new(
+        region: region,
+        subscription_key: subscription_key,
+        government: government,
+        private_link: private_link,
+        ssl_verify_peer: ssl_verify_peer,
+        ssl_ca_file: ssl_ca_file
+      )
     end
 
     #
