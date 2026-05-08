@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Unreleased]
 
+### [0.4.2] - 2026-05-08
+
+### Fixed
+
+-ssl verify option and cert file location for non valid private links in gov
+
 ## [0.4.0] - 2023-05-10
 
 ### Fixed
